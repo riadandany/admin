@@ -586,12 +586,7 @@ function App() {
                   <img src="https://customer-assets.emergentagent.com/job_2f9a6599-6bc4-4224-8bce-b59cd468f774/artifacts/1775941528753.png" alt="Logo" />
                 </div>
                 <h3>لمسة فن</h3>
-                <p className="about-text">نحن متخصصون في تصميم وطباعة جميع أنواع المطبوعات بأعلى جودة وأفضل الأسعار. من كروت الفيزيت إلى الفلكسات الكبيرة، نقدم لكم خدمات تصميم احترافية تلبي جميع احتياجاتكم.</p>
-                <div className="about-info">
-                  <div className="info-item"><i className="fas fa-map-marker-alt"></i> حلب - باب النصر - امام الباب الاثري</div>
-                  <div className="info-item"><i className="fas fa-phone"></i> 0980428648</div>
-                </div>
-                <h4>تابعنا على</h4>
+          <h4>تابعنا على</h4>
                 <div className="social-links">
                   {socialLinks.map(link => (
                     <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className="social-link" title={link.platform} onClick={playClick}>
