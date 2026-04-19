@@ -228,14 +228,14 @@ function App() {
     setUploading(true);
     try {
       const imageUrl = await uploadImage(newWorkImage);
-      await supabaseFetch('images', {
+      await supabaseFetch('gallery', {
         method: 'POST',
         headers: { 'Prefer': 'return=minimal' },
         body: JSON.stringify({
           title: newWork.title,
           description: newWork.description,
           category: newWork.category,
-          image_url: imageUrl
+          image_url: imageUrl.image_url,
         })
       });
       showToast('تم إضافة العمل بنجاح');
@@ -259,7 +259,7 @@ function App() {
       if (editWorkImage) {
         imageUrl = await uploadImage(editWorkImage);
       }
-      await supabaseFetch(`images?id=eq.${editingWork.id}`, {
+      await supabaseFetch(`gallery?id=eq.${editingWork.id}`, {
         method: 'PATCH',
         body: JSON.stringify({
           title: editingWork.title,
@@ -278,7 +278,7 @@ function App() {
 
   const deleteWork = async (id) => {
     try {
-      await supabaseFetch(`images?id=eq.${id}`, { method: 'DELETE' });
+      await supabaseFetch(`gallery?id=eq.${id}`, { method: 'DELETE' });
       showToast('تم حذف العمل بنجاح');
       fetchWorks();
     } catch (e) { showToast('حدث خطأ'); }
