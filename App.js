@@ -522,7 +522,7 @@ function App() {
         {currentPage === 'home' && (
           <section className="page active" data-testid="home-page">
             <div className="hero-section">
-              <img src="112233.png" className="hero-logo" alt="Logo" />
+              <img src="112233.png" className="hero-logo" alt="112233.png" />
               <h1 className="main-title decorated"><span>لمسة فن</span></h1>
               <p className="hero-subtitle">حيث ينتهي التقليد.. يبدأ الإبداع. لمسة فن: بصمتك الاستثنائية في عالمٍ من الألوان</p>
               <button className="pulse-button" data-testid="explore-works-btn" onClick={() => navigateTo('gallery')}>استعرض أعمالنا</button>
