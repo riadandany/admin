@@ -522,7 +522,7 @@ function App() {
         {currentPage === 'home' && (
           <section className="page active" data-testid="home-page">
             <div className="hero-section">
-              <img src="https://customer-assets.emergentagent.com/job_2f9a6599-6bc4-4224-8bce-b59cd468f774/artifacts/1775941528753.png" className="hero-logo" alt="Logo" />
+              <img src="112233.png" className="hero-logo" alt="Logo" />
               <h1 className="main-title decorated"><span>لمسة فن</span></h1>
               <p className="hero-subtitle">حيث ينتهي التقليد.. يبدأ الإبداع. لمسة فن: بصمتك الاستثنائية في عالمٍ من الألوان</p>
               <button className="pulse-button" data-testid="explore-works-btn" onClick={() => navigateTo('gallery')}>استعرض أعمالنا</button>
@@ -583,7 +583,7 @@ function App() {
             <div className="about-container">
               <div className="about-content glass-box">
                 <div className="about-logo">
-                  <img src="https://customer-assets.emergentagent.com/job_2f9a6599-6bc4-4224-8bce-b59cd468f774/artifacts/1775941528753.png" alt="Logo" />
+                  <img src="112233.png" alt="Logo" />
                 </div>
                 <h3>لمسة فن</h3>
           <h4>تابعنا على</h4>
