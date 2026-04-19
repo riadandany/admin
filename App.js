@@ -583,7 +583,7 @@ function App() {
             <div className="about-container">
               <div className="about-content glass-box">
                 <div className="about-logo">
-                  <img src="112233.png" alt="Logo" />
+                  <img src="112233.png" alt="112233.png" />
                 </div>
                 <h3>لمسة فن</h3>
           <h4>تابعنا على</h4>
