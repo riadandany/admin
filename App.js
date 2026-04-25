@@ -1,10 +1,15 @@
-import { useState, useEffect, useRef } from "react";
-import "@/App.css";
-import axios from "axios";
-
-const BACKEND_URL = "https://pntqobqhaggvcjtyspvb.supabase.co/rest/v1";
+// 1. إعدادات السيرفر الخاص بك (Supabase)
+const SUPABASE_URL = "https://pntqobqhaggvcjtyspvb.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBudHFvYnFoYWdndmNqdHlzcHZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5MjYwNjQsImV4cCI6MjA5MTUwMjA2NH0.fdl8d8I0UoDyWGDPK0VNUZBaEBQD4cz-ReowhbtxH0k";
-const BACKEND_URL = SUPABASE_URL + "/rest/v1";
+
+// 2. توحيد رابط الـ API ليعمل على كل الموقع
+const BACKEND_URL = `${SUPABASE_URL}/rest/v1`;
+const API = BACKEND_URL; 
+
+// 3. تفعيل "مفتاح الأمان" لكل عمليات الإرسال والاستقبال تلقائياً
+axios.defaults.headers.common['apikey'] = SUPABASE_KEY;
+axios.defaults.headers.common['Authorization'] = `Bearer ${SUPABASE_KEY}`;
+
 
 const CLICK_SOUND_URL = "https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3";
 
