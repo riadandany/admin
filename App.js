@@ -191,22 +191,36 @@ function App() {
   }, [currentPage, isLoggedIn, adminTab]);
 
   // Login
-  const handleLogin = async () => {
+    const handleLogin = async () => {
     playClick();
     try {
-      const response = await axios.post(`${API}/auth/login`, { username, password });
-      if (response.data.success) {
+      // الاتصال بجدول المشرفين في سيرفرك مباشرة
+      const response = await axios.get(
+        `${BACKEND_URL}/admins?username=eq.${username}&password=eq.${password}`,
+        {
+          headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": `Bearer ${SUPABASE_KEY}`
+          }
+        }
+      );
+
+      if (response.data && response.data.length > 0) {
         setIsLoggedIn(true);
         setShowLoginModal(false);
         setCurrentPage('admin');
-        showToast('مرحباً أيها المطور');
+        showToast('مرحباً بك يا رياض');
         setUsername('');
         setPassword('');
+      } else {
+        showToast('اسم المستخدم أو كلمة المرور خاطئة!');
       }
     } catch (e) {
-      showToast('اسم المستخدم أو كلمة المرور خاطئة!');
+      console.error(e);
+      showToast('خطأ في الاتصال بالسيرفر!');
     }
   };
+
 
   const handleLogout = () => {
     playClick();
