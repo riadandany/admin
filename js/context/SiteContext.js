@@ -21,12 +21,15 @@ const DEFAULT_SETTINGS = {
   sound_page_url: ''
 };
 
+const CACHE_KEY = 'mr_site_settings_cache';
+
 export const SiteProvider = ({ children }) => {
   const [settings, setSettings] = useState(() => {
     try {
-      const cached = localStorage.getItem('mr_site_settings_cache');
-      return cached ? JSON.parse(cached) : DEFAULT_SETTINGS;
-    } catch { return DEFAULT_SETTINGS; }
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached) return { ...DEFAULT_SETTINGS, ...JSON.parse(cached) };
+    } catch {}
+    return DEFAULT_SETTINGS;
   });
   const [pages, setPages] = useState([]);
   const [buttons, setButtons] = useState([]);
@@ -44,7 +47,7 @@ export const SiteProvider = ({ children }) => {
     if (s.data) {
       setSettings(s.data);
       setSoundSettings(s.data);
-      try { localStorage.setItem('mr_site_settings_cache', JSON.stringify(s.data)); } catch {}
+      try { localStorage.setItem(CACHE_KEY, JSON.stringify(s.data)); } catch {}
     }
     if (p.data) setPages(p.data);
     if (b.data) setButtons(b.data);
@@ -58,6 +61,7 @@ export const SiteProvider = ({ children }) => {
     const next = { ...settings, ...patch, updated_at: new Date().toISOString() };
     setSettings(next);
     setSoundSettings(next);
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify(next)); } catch {}
     await supabase.from('site_settings').upsert({ ...next }).eq('id', 1);
   };
 
