@@ -10,25 +10,7 @@ const DynamicPage = () => {
   const { slug } = useParams();
   const nav = useNavigate();
   const [page, setPage] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [lightboxImg, setLightboxImg] = useState(null);
-
-  // تحميل ملف/صورة بشكل صحيح حتى مع روابط خارجية
-  const downloadFile = async (url, name) => {
-    try {
-      const res = await fetch(url);
-      const blob = await res.blob();
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = name || url.split('/').pop() || 'download';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(a.href);
-    } catch {
-      window.open(url, '_blank');
-    }
-  };
+  const [lightbox, setLightbox] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -38,13 +20,12 @@ const DynamicPage = () => {
       setLoading(false);
       playPage();
       if (data && data.type === 'external' && data.content?.url) {
-        window.location.href = data.content.url;
+        window.open(data.content.url, '_blank', 'noopener,noreferrer');
       }
     })();
   }, [slug]);
 
   if (loading) return <div className="min-h-screen bg-black text-white flex items-center justify-center" dir="rtl">جارٍ التحميل...</div>;
-
   if (!page) return (
     <div className="min-h-screen bg-black text-white" dir="rtl">
       <Navbar />
@@ -56,36 +37,30 @@ const DynamicPage = () => {
     </div>
   );
 
-  const content = page.content || {};
-
-  // ── كود: iframe يملأ الشاشة كاملاً مع إبقاء الشريط العلوي ──
+  // Code page = full screen iframe, no navbar
   if (page.type === 'code') {
+    const content = page.content || {};
     return (
-      <div dir="rtl" style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden', background: '#000' }}>
-        <Navbar />
-        <iframe
-          title="code"
-          srcDoc={`<!doctype html><html><head><style>${content.css || ''}</style></head><body>${content.html || ''}<script>${content.js || ''}<\/script></body></html>`}
-          style={{ flex: 1, width: '100%', border: 'none', background: 'white' }}
-        />
-      </div>
+      <iframe
+        title="code"
+        srcDoc={`<!doctype html><html><head><style>${content.css || ''}</style></head><body>${content.html || ''}<script>${content.js || ''}<\/script></body></html>`}
+        style={{ width: '100vw', height: '100vh', display: 'block', border: 'none', position: 'fixed', top: 0, left: 0 }}
+      />
     );
   }
 
-  // ── رابط خارجي: يعيد التوجيه تلقائياً ──
+  // External link = opened in new tab, show message
   if (page.type === 'external') {
     return (
-      <div className="min-h-screen bg-black text-white flex flex-col" dir="rtl">
-        <Navbar />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center space-y-3">
-            <div className="animate-pulse text-emerald-300 text-2xl font-bold">جارٍ التوجيه...</div>
-            <p className="text-gray-400 text-sm">{content.url}</p>
-          </div>
-        </div>
+      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-5" dir="rtl">
+        <p className="text-emerald-300 text-xl">تم فتح الرابط في نافذة جديدة 🔗</p>
+        <a href={page.content?.url} target="_blank" rel="noopener noreferrer" className="btn-grad px-6 py-2 rounded-lg text-sm">فتح الرابط مجدداً</a>
+        <button onClick={() => nav(-1)} className="text-gray-400 text-sm hover:text-white">← رجوع</button>
       </div>
     );
   }
+
+  const content = page.content || {};
 
   const Body = () => {
     switch (page.type) {
@@ -106,31 +81,55 @@ const DynamicPage = () => {
             ))}
           </div>
         );
-
       case 'images':
         return (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {(content.images || []).map((img, i) => (
+          <>
+            {lightbox && (
               <div
-                key={i}
-                className="relative group rounded-xl overflow-hidden border border-emerald-500/30 cursor-pointer"
-                onClick={() => setLightboxImg(img)}
+                className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+                onClick={() => setLightbox(null)}
               >
-                <img src={img} alt="" className="w-full h-56 object-cover transition group-hover:scale-105" />
-                {content.allow_download && (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); downloadFile(img); }}
-                    className="absolute bottom-2 right-2 bg-emerald-500/90 text-emerald-950 p-2 rounded-full hover:bg-emerald-400 transition"
-                    title="تحميل"
-                  >
-                    <Download size={14} />
-                  </button>
-                )}
+                <button
+                  onClick={() => setLightbox(null)}
+                  className="absolute top-4 right-4 bg-zinc-800 text-white rounded-full p-2 hover:bg-red-600 transition z-50"
+                >
+                  <X size={22} />
+                </button>
+                <a
+                  href={lightbox}
+                  download
+                  onClick={e => e.stopPropagation()}
+                  className="absolute top-4 left-4 bg-emerald-600 text-white rounded-full p-2 hover:bg-emerald-500 transition z-50"
+                >
+                  <Download size={22} />
+                </a>
+                <img
+                  src={lightbox}
+                  alt=""
+                  className="max-w-full max-h-[90vh] rounded-xl object-contain"
+                  onClick={e => e.stopPropagation()}
+                />
               </div>
-            ))}
-          </div>
+            )}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {(content.images || []).map((img, i) => (
+                <div key={i} className="relative group rounded-xl overflow-hidden border border-emerald-500/30 cursor-pointer" onClick={() => setLightbox(img)}>
+                  <img src={img} alt="" className="w-full h-56 object-cover" />
+                  {content.allow_download && (
+                    <a
+                      href={img}
+                      download
+                      onClick={e => e.stopPropagation()}
+                      className="absolute bottom-2 right-2 bg-emerald-500/90 text-emerald-950 p-2 rounded-full hover:bg-emerald-400 transition"
+                    >
+                      <Download size={14} />
+                    </a>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
         );
-
       case 'videos':
         return (
           <div className="grid md:grid-cols-2 gap-5">
@@ -145,23 +144,26 @@ const DynamicPage = () => {
             })}
           </div>
         );
-
       case 'files':
         return (
           <div className="max-w-2xl mx-auto space-y-3">
             {(content.files || []).map((f, i) => (
-              <button
-                key={i}
-                onClick={() => downloadFile(f.url, f.name)}
-                className="w-full flex items-center justify-between glass-card rounded-xl p-4 hover:bg-emerald-500/10 transition text-right"
-              >
-                <span className="text-white">{f.name || 'ملف ' + (i + 1)}</span>
+              <a key={i} href={f.url} download className="flex items-center justify-between glass-card rounded-xl p-4 hover:bg-emerald-500/10 transition">
+                <span className="text-white">{f.name || 'file ' + (i+1)}</span>
                 <Download size={18} className="text-emerald-300" />
-              </button>
+              </a>
             ))}
           </div>
         );
-
+      case 'code':
+        return (
+          <iframe
+            title="code"
+            srcDoc={`<!doctype html><html><head><style>${content.css || ''}</style></head><body>${content.html || ''}<script>${content.js || ''}<\/script></body></html>`}
+            className="w-full bg-white"
+            style={{ height: '100vh', display: 'block', border: 'none' }}
+          />
+        );
       default:
         return <p className="text-gray-400">نوع صفحة غير مدعوم</p>;
     }
@@ -178,44 +180,8 @@ const DynamicPage = () => {
         </div>
       </section>
       <Footer />
-
-      {/* ── Lightbox للصور ── */}
-      {lightboxImg && (
-        <div
-          className="fixed inset-0 z-50 bg-black/92 flex items-center justify-center p-4"
-          onClick={() => setLightboxImg(null)}
-        >
-          {/* زر الإغلاق */}
-          <button
-            className="absolute top-4 left-4 bg-white/10 hover:bg-white/20 text-white rounded-full p-2.5 transition z-10"
-            onClick={() => setLightboxImg(null)}
-            title="إغلاق"
-          >
-            <X size={24} />
-          </button>
-
-          {/* زر التحميل */}
-          {content.allow_download && (
-            <button
-              className="absolute top-4 right-4 bg-emerald-500/90 hover:bg-emerald-400 text-emerald-950 rounded-full p-2.5 transition z-10"
-              onClick={(e) => { e.stopPropagation(); downloadFile(lightboxImg); }}
-              title="تحميل"
-            >
-              <Download size={20} />
-            </button>
-          )}
-
-          {/* الصورة المكبّرة */}
-          <img
-            src={lightboxImg}
-            alt=""
-            className="max-w-full max-h-[90vh] rounded-xl object-contain shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
-      )}
     </div>
   );
 };
-
 export default DynamicPage;
+
