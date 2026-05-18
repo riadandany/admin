@@ -1,0 +1,89 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#0B0C10"/><meta name="description" content="WaveChat — تطبيق محادثات حديث"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/><link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/><title>WaveChat</title>
+
+<script>
+// ========== Supabase Session Auto-Refresh ==========
+(function() {
+  var SUPABASE_URL = "https://htmcmpctuiazodueyejk.supabase.co";
+  var SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0bWNtcGN0dWlhem9kdWV5ZWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5ODc5ODksImV4cCI6MjA5NDU2Mzk4OX0._MRUG5xO1nb-a7e6KUPolPnkw2bLL9rF4JTLefNj1e0";
+  var STORAGE_KEY = "sb-htmcmpctuiazodueyejk-auth-token";
+  var CHECK_INTERVAL = 4 * 60 * 1000; // كل 4 دقائق
+
+  function getSession() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch(e) { return null; }
+  }
+
+  function isExpiringSoon(session) {
+    if (!session || !session.expires_at) return false;
+    var now = Math.floor(Date.now() / 1000);
+    // إذا باقي أقل من 10 دقائق
+    return (session.expires_at - now) < 600;
+  }
+
+  function refreshSession(refreshToken) {
+    return fetch(SUPABASE_URL + "/auth/v1/token?grant_type=refresh_token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_KEY,
+        "Authorization": "Bearer " + SUPABASE_KEY
+      },
+      body: JSON.stringify({ refresh_token: refreshToken })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.access_token) {
+        var newSession = {
+          access_token: data.access_token,
+          refresh_token: data.refresh_token,
+          expires_at: Math.floor(Date.now() / 1000) + data.expires_in,
+          expires_in: data.expires_in,
+          token_type: "bearer",
+          user: data.user
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(newSession));
+        console.log("[WaveChat] ✅ Token refreshed successfully");
+      } else {
+        console.warn("[WaveChat] ⚠️ Refresh failed, clearing session");
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    })
+    .catch(function(e) {
+      console.warn("[WaveChat] ⚠️ Refresh error:", e);
+    });
+  }
+
+  function checkAndRefresh() {
+    var session = getSession();
+    if (!session) return;
+    if (isExpiringSoon(session) && session.refresh_token) {
+      console.log("[WaveChat] 🔄 Token expiring soon, refreshing...");
+      refreshSession(session.refresh_token);
+    }
+  }
+
+  // تشغيل عند فتح الصفحة
+  setTimeout(checkAndRefresh, 2000);
+  // تشغيل كل 4 دقائق
+  setInterval(checkAndRefresh, CHECK_INTERVAL);
+
+  // تشغيل عند رجوع المستخدم للتبويب
+  document.addEventListener("visibilitychange", function() {
+    if (document.visibilityState === "visible") {
+      checkAndRefresh();
+    }
+  });
+
+  // تشغيل عند رجوع الاتصال بالإنترنت
+  window.addEventListener("online", function() {
+    setTimeout(checkAndRefresh, 1000);
+  });
+
+})();
+// ====================================================
+</script>
+
+<script defer="defer" src="/static/js/main.908a8f7d.js"></script><link href="/static/css/main.793941f4.css" rel="stylesheet"></head><body><noscript>تحتاج إلى تفعيل JavaScript لتشغيل هذا التطبيق.</noscript><div id="root"></div></body></html>
