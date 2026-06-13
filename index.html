@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+<title>RYNC DRAW — ارسم في الهواء</title>
+<meta name="description" content="تجربة فاخرة للرسم في الهواء بحركة اليد عبر الكاميرا." />
+<link rel="icon" type="image/png" href="logo.png" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="bg-aurora"></div>
+<div class="bg-grain"></div>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo-wrap">
+        <div class="logo-glow"></div>
+        <img src="logo.png" alt="RYNC" class="logo" />
+      </div>
+      <div class="brand-text">
+        <div class="brand-title">RYNC DRAW</div>
+        <div class="brand-sub">ارسم • بحركة • يدك</div>
+      </div>
+    </div>
+    <div class="modes">
+      <button class="mode active" data-mode="draw">
+        <div class="mode-label">ارسم</div><div class="mode-sub">Draw</div>
+      </button>
+      <button class="mode" data-mode="watch">
+        <div class="mode-label">مشاهدة</div><div class="mode-sub">Watch</div>
+      </button>
+    </div>
+  </header>
+
+  <main class="stage">
+    <video id="video" playsinline muted autoplay></video>
+    <div class="grid"></div>
+    <div class="vignette"></div>
+    <canvas id="canvas"></canvas>
+    <canvas id="overlay"></canvas>
+
+    <div class="palette" id="palette"></div>
+
+    <div class="brush">
+      <input type="range" id="brush" min="2" max="22" value="7" />
+      <span id="brushVal">7px</span>
+    </div>
+
+    <div class="tutorial">
+      <div class="tut-title">[ الإشارات ]</div>
+      <div>☝️ <span style="color:#9bffbf">السبابة فقط</span> → ارسم</div>
+      <div>👌 <span style="color:#7ff0ff">قرصة (إبهام + سبابة)</span> → حرّك الرسمة</div>
+      <div>✌️ <span style="color:#ff7aa2">سبابة + وسطى</span> → امسح المنطقة</div>
+      <div class="tut-keys">C مسح كامل · Z تراجع</div>
+    </div>
+
+    <div class="actions">
+      <button class="act danger" id="btnClear">مسح</button>
+      <button class="act ghost" id="btnUndo">تراجع</button>
+    </div>
+
+    <div class="status" id="status">
+      <span class="dot warn"></span><span id="statusText">جاري تشغيل الكاميرا…</span>
+    </div>
+
+    <div class="splash" id="splash">
+      <img src="logo.png" alt="RYNC" />
+      <div class="splash-title">RYNC DRAW</div>
+      <div class="splash-sub" id="splashSub">جاري تشغيل الكاميرا…</div>
+    </div>
+  </main>
+
+  <footer class="footbar">
+    <span>© استوديو RYNC</span>
+    <span class="hide-sm">صُنع للضوء والحركة</span>
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+<script src="script.js"></script>
+</body>
+</html>
