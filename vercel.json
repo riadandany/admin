@@ -1,11 +1,9 @@
 {
   "cleanUrls": true,
   "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "Permissions-Policy", "value": "camera=(self)" }
-      ]
-    }
+    { "source": "/(.*)", "headers": [
+      { "key": "Permissions-Policy", "value": "camera=(self)" },
+      { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" }
+    ]}
   ]
 }
